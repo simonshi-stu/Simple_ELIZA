@@ -9,12 +9,14 @@
 ## 功能
 
 - 零第三方依赖，仅需 Python 3.10+。
-- 正则规则按优先级排序，具体意图会先于兜底规则触发。
+- 正则规则按优先级排序，危机与伤害内容优先于家庭等普通主题，具体意图会先于兜底规则触发。
 - 捕获组把用户输入中的关键信息带回回复，例如 `I need help`。
 - 代词反射（`I → you`、`my → your`、`you → I`），并以单词边界匹配，避免误改词的一部分。
 - 多个响应模板随机选择；传入种子时可复现。
 - 小型“延迟话题”记忆：对 need / remember / dream 的回应有小概率在后续轮次重新被提出。
 - `goto:` 规则演示：兜底规则能转交给一个更具体的主题规则。
+- 共情层：识别难过、焦虑、孤独、压力等情绪，先给予有限度的承接，再邀请用户继续表达。
+- 安全层：对 abuse / violence 和自伤、自杀相关语言做最高优先级响应，不会被记忆或家庭规则覆盖；它会鼓励用户联系当地紧急服务、危机支持或可信赖的人。
 - 单元测试覆盖规范化、反射、规则优先级、家人主题与空输入。
 
 ## 快速开始
@@ -28,9 +30,9 @@ python eliza.py
 ```text
 ELIZA: Hello. I am ELIZA. How are you feeling today?
 You: I need my family to understand me
-ELIZA: Why do you need your family to understand you?
+ELIZA: That sounds important to you. What would change for you if you had your family to understand you?
 You: My mother worries me
-ELIZA: Tell me more about your family.
+ELIZA: Family relationships can carry a lot. What feels most important about this for you?
 You: bye
 ELIZA: Goodbye. Take care.
 ```
@@ -95,7 +97,13 @@ I need my family to understand me
 
 ### 5. 微型记忆
 
-当用户提到 `need`、`remember` 或 `dream`，生成的具体回应会放入一个最多五条的 `deque`。后续每轮有 20% 概率优先取出其中一条。它不保存用户的敏感资料到磁盘，也不构成长期记忆；目的只是展示规则系统如何增加最低成本的上下文感。
+当用户提到 `need`、`remember` 或 `dream`，引擎会将主题转换成一个新的后续问题，放入最多五条的 `deque`。从第三轮开始，后续每轮有 15% 概率优先提出这个问题。它不保存任何内容到磁盘，也不构成长期记忆；目的只是展示规则系统如何增加最低成本的上下文感。
+
+### 6. 共情与安全优先级
+
+传统 ELIZA 通常只用追问来维持对话；本项目在此基础上增加了一个明确的“承接 → 探索”层。普通负面情绪会先得到简短、不夸大也不假装理解的回应，例如 `That sounds really difficult.`，随后才询问“现在最难的部分是什么”。
+
+伤害与危机规则的优先级分别为 105 和 110，且在延迟话题记忆**之前**检查。因此 `My mother abuses me` 不会再被 `family` 规则处理，而会得到安全导向回应；`I want to hurt myself` 不会被旧话题打断。这仍是模式匹配，不代表机器人能评估风险或代替专业支持。
 
 ## 如何扩展
 

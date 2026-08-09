@@ -41,6 +41,33 @@ ELIZA: Goodbye. Take care.
 python -m unittest -v
 ```
 
+## 通用演示：跑通多类规则
+
+项目提供了一个独立的演示脚本，它用固定随机种子依次输入“需求、状态、回忆、为什么、能否、肯定、兜底”等常见句式。种子只保证**这份演示**每次输出一致，不会给主聊天程序增加限制，也不会降低自由对话时的随机性。
+
+在 PowerShell 中运行：
+
+```powershell
+cd E:\Projects\ELIZA
+py -3 examples\demo.py
+```
+
+预期会看到类似：
+
+```text
+You:   I need my parent to understand me
+ELIZA: Would getting your parent to understand you really help you?
+
+You:   I remember my father
+ELIZA: Do you often think of your father?
+```
+
+随后可直接启动自由聊天：
+
+```powershell
+py -3 eliza.py
+```
+
 ## 工作流程
 
 ```mermaid
@@ -125,6 +152,8 @@ Simple_ELIZA/
 ├── eliza.py       # 规则、反射、引擎和命令行聊天循环
 ├── test_eliza.py  # 标准库 unittest 测试
 ├── README.md      # 原理、使用方法和扩展指南
+├── examples/
+│   └── demo.py    # 可复现、但不影响主程序的通用演示
 └── .gitignore
 ```
 

@@ -156,10 +156,22 @@ def compile_rules() -> tuple[Rule, ...]:
             ("What do you think?", "Why do you ask?", "What answer would please you most?"),
             30,
         ),
+        # This universal rule is reached only through ``goto:explore`` below.
+        # Its lower priority keeps the default rule as the normal final fallback.
+        (
+            "explore",
+            r"(.*)",
+            (
+                "What feels most important about that?",
+                "Could you say a little more about it?",
+                "What part of that would you like to explore?",
+            ),
+            -1,
+        ),
         (
             "default",
             r"(.*)",
-            ("Please tell me more.", "Can you elaborate on that?", "How does that make you feel?", "goto:family"),
+            ("Please tell me more.", "Can you elaborate on that?", "How does that make you feel?", "goto:explore"),
             0,
         ),
     ]

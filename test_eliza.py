@@ -29,6 +29,17 @@ class ElizaTests(unittest.TestCase):
     def test_empty_input_has_a_safe_response(self):
         self.assertEqual(self.bot.respond("  ?! "), "Please say a little more.")
 
+    def test_goto_target_is_a_universal_rule(self):
+        default_rule = self.bot.by_name["default"]
+        explore_rule = self.bot.by_name["explore"]
+        self.assertIn("goto:explore", default_rule.responses)
+        self.assertEqual(explore_rule.pattern.pattern, r"(.*)")
+        self.assertLess(explore_rule.priority, default_rule.priority)
+
+        # Seed 0 makes the default rule select ``goto:explore`` first.
+        reply = Eliza(seed=0).respond("A completely unfamiliar statement")
+        self.assertIn(reply, explore_rule.responses)
+
 
 if __name__ == "__main__":
     unittest.main()

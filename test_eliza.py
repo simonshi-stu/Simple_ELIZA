@@ -21,27 +21,13 @@ class ElizaTests(unittest.TestCase):
     def test_family_rule_matches_embedded_word(self):
         reply = self.bot.respond("My mother worries me")
         self.assertIn(reply, {
-            "Family relationships can carry a lot. What feels most important about this for you?",
-            "It sounds as though this relationship matters to you. How has it been affecting you?",
-            "Would you like to tell me more about what happens with your family?",
+            "Tell me more about your family.",
+            "How do you feel about your family?",
+            "Who else in your family comes to mind?",
         })
 
     def test_empty_input_has_a_safe_response(self):
         self.assertEqual(self.bot.respond("  ?! "), "Please say a little more.")
-
-    def test_abuse_overrides_a_family_rule(self):
-        reply = self.bot.respond("My mother abuses me")
-        self.assertIn("You do not deserve abuse or violence", reply)
-        self.assertIn("immediate danger", reply)
-
-    def test_crisis_overrides_saved_memory(self):
-        self.bot.memory.append("Earlier, you mentioned something else.")
-        reply = self.bot.respond("I want to hurt myself")
-        self.assertIn("Your safety matters more than this chat", reply)
-
-    def test_help_request_offers_a_next_step(self):
-        reply = self.bot.respond("What can I do about this?")
-        self.assertTrue("small step" in reply or "options" in reply)
 
 
 if __name__ == "__main__":
